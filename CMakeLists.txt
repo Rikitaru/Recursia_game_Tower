@@ -3,4 +3,4 @@ project(rECURSIA)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(rECURSIA main.cpp)
+add_executable(rECURSIA Tower_Game/main.cpp)
