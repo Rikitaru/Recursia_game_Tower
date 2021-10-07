@@ -1,5 +1,5 @@
 #include <iostream> //Created by Glagolev & Korobkov
-#include <iomanip>//aaaaaaaaaaa
+#include <iomanip>//a
 using namespace std;
 struct pancake {
     int PancakeNumber; //номер(вес) блинчика
