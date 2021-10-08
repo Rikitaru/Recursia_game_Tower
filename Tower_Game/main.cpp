@@ -1,5 +1,5 @@
 #include <iostream> //Created by Glagolev & Korobkov
-#include <iomanip>//a
+#include <iomanip>
 using namespace std;
 struct pancake {
     int PancakeNumber; //номер(вес) блинчика
@@ -101,7 +101,7 @@ int main() {
     /*-------------------------------------------------------------------------------------------------*/
     bool Flag = false;// Флаг, который показывает, что нулевой стержень пуст. Ввод нового правила       /
     /*-------------------------------------------------------------------------------------------------*/
-    bool Flag2 = false;
+    bool Flag2 = false; // Флаг, который показывает, что в данныц момент второй стержень пуст
 
     int number = 0;// индекс текущего стержня, может меняться на 0,1,2
     //Цикл позволяет просмотреть ровно две следующие башни для "перемещения блинчика" с текущего стержня
@@ -143,14 +143,14 @@ int main() {
 
                 if (Flag2 == true) {
                     int temp;
-                    temp = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;
+                    temp = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;//Если 2 второй стержень пуст, то запоминаем первый (текущий) бличик на первом стержне
 
-                    if (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp) {
+                    if (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp) {//Проверяем, нходимся ли мы на блинчике, который пометили
                         if (number == 0) {
-                            Tower[number + 2].PanckakeArrray[Tower[number + 2].CurentlyIndex].PancakeNumber = temp;
-                        }
-                        else {
-                            Tower[number - 1].PanckakeArrray[Tower[number - 1].CurentlyIndex].PancakeNumber = temp;
+                            Tower[number + 2].PanckakeArrray[Tower[number + 2].CurentlyIndex].PancakeNumber = temp;//Перемещаем ппомеченный блинчик на number + 1
+                        }                                                                                         
+                        else {                                                                                   
+                            Tower[number - 1].PanckakeArrray[Tower[number - 1].CurentlyIndex].PancakeNumber = temp;//Перемещаем помеченный блинчик на number + 1
 
                         }
                     }
@@ -185,7 +185,6 @@ int main() {
                     temp_previous_number_pancake = Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber;
                     temp_previous_number_karnel = number;
                 }
-                ///////////************************//////////////
             }
             //после перемещения блинчика надо осуществить проверку на "пустой ли нулевой стержень", надо ли переходить на режим "сборки башни"
             if (Game_only_one(Tower) == 0) {//если вернет индекс нулевой башни, то башня была разобрана и теперь надо ее собрать на другом стержне
