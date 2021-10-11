@@ -2,7 +2,7 @@
 #include <iomanip>
 #define A if ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel))){continue;}
 #define B if ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == tempnextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel))){ break;}
-
+int count123 = 0;
 using namespace std;
 struct pancake {
     int PancakeNumber; //номер(вес) блинчика
@@ -131,7 +131,7 @@ int main() {
     //Пробуем переместить текущий блинчик с текущего стержня на следующие стержни
    
     while(true){//Tower[0].CurentlyIndex!=0 && Tower[1].CurentlyIndex!=0){ //условие проверить потом
-        cout << "==========================================================================================="<<endl;
+        cout << "========================================="<< ++count123 <<"=================================================="<<endl;
         number = (++number)%3;
         int nextNumber = (number + 1) % 3; //индекс следующего стержня
         //******************************************************************************************************************************************************************
@@ -145,7 +145,8 @@ int main() {
         if (Flag == false){//если у нас первая башня не пустая, то выполняются следующие правила:
             /*Постоянная проверка на сброс*/
 
-            if (!((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+            //if (!((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+            if (!((Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PreviousPosition == temp_previous_number_karnel) && ((Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber == temp_previous_number_pancake)))){
                 while( Game(Tower) != -1){
                     temp_previous_number_karnel=0;
                     temp_previous_number_pancake = sbros(Tower);
@@ -178,7 +179,7 @@ int main() {
                         Tower[2].show_karnel(2);
                         cout << "==========================================================================================="<<endl;
                         /*Постоянная проверка на сброс*/
-                        /*пофиксить условие, чтобы не давал сбрасывать блинчики которые только что положили на первую башню*/if (!((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+                        if (!((Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PreviousPosition == temp_previous_number_karnel) && ((Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber == temp_previous_number_pancake)))){
                             if (Game(Tower) != -1){
                                 temp_previous_number_karnel=0;
                                 temp_previous_number_pancake = sbros(Tower);
