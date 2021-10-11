@@ -1,5 +1,8 @@
 #include <iostream> //Created by Glagolev & Korobkov
 #include <iomanip>
+#define A if ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel))){continue;}
+#define B if ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == tempnextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel))){ break;}
+
 using namespace std;
 struct pancake {
     int PancakeNumber; //номер(вес) блинчика
@@ -77,21 +80,41 @@ int Game_only_two(karnel* Tower) {
     return -1;
 }
 
+
+int sbros(karnel* Tower){
+    int temp = Game(Tower);//вернется индекс пустой башни
+    if (temp==1 || temp==2){
+        //необходимо выполнить "падение блинчика с нулевой башни на пустую башню
+        Tower[temp].CurentlyIndex++; //повышаем индекс пустой башни
+        //в пустую башню перемещаем блинчик с нулевой башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
+        Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PancakeNumber = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;
+        Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PreviousPosition = 0; //указываем, откуда переместили блинчик
+
+
+        //у нулевой башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
+        Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber = NULL;
+        Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PreviousPosition = -1;
+        Tower[0].CurentlyIndex--;
+
+        //записываем, какой блинчик и откуда переместили (блинчик уже на новой башне) (чтобы избежать пустых перемещений в будущем)
+
+        Tower[0].show_karnel(0);
+        Tower[1].show_karnel(1);
+        Tower[2].show_karnel(2);
+        cout << "==========================================================================================="<<endl;
+        return Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PancakeNumber;
+    }
+    return -1;
+}
+
 int main() {
     system("chcp 65001");
     karnel Tower[3]; //создание трех путсых башен
-    karnel* prt = &Tower[0]; //указатель на нулевую башню
-    /*int index = proverka(prt); //
-    (index != -1 ? cout << " Пустой стержень найден, он под индексом " << index : cout << " Пустой стержень не найден ")
-    << endl;*/
     Tower[0].start_position(); //даем нулевой башне блинчики
     Tower[0].show_karnel(0);
     Tower[1].show_karnel(1);
     Tower[2].show_karnel(2);
-
-
-
-
+    cout << "==========================================================================================="<<endl;
 
     //------Эти данные обновляются после каждого перемещения--------------------------------------------------------
     int temp_previous_number_pancake = -1;//запоминаем предыдущий переместившийся блинчик, его номер (уникальный)  |
@@ -103,162 +126,113 @@ int main() {
     /*-------------------------------------------------------------------------------------------------*/
     bool Flag2 = false; // Флаг, который показывает, что в данныц момент второй стержень пуст
 
-    int number = 0;// индекс текущего стержня, может меняться на 0,1,2
+    int number = -1;// индекс текущего стержня, может меняться на 0,1,2
     //Цикл позволяет просмотреть ровно две следующие башни для "перемещения блинчика" с текущего стержня
     //Пробуем переместить текущий блинчик с текущего стержня на следующие стержни
    
-    while(Tower[0].CurentlyIndex!=0 || Tower[1].CurentlyIndex!=0){
+    while(true){//Tower[0].CurentlyIndex!=0 && Tower[1].CurentlyIndex!=0){ //условие проверить потом
         cout << "==========================================================================================="<<endl;
+        number = (++number)%3;
         int nextNumber = (number + 1) % 3; //индекс следующего стержня
-//******************************************************************************************************************************************************************
-        //Если текущий блинчик был на предыдущей позиции в следующем стержне, то туда перемещать его бессмысленно, избегаем пустых перемещений, поэтому переходим на след. итерацию
-        if ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) /*Если текущий блинчик был раньше на позиции следующего стержня*/
-        && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) /*Если текущий блинчик был перемещен в прошлую итерацию*/
-        && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel))) /*Если текущий блинчик был перемещен в прошлую итерацию на следующий стержень*/
-            {
-            continue; //переход на след. итерацию
-            }
-//******************************************************************************************************************************************************************
+        //******************************************************************************************************************************************************************
 
-//******************************************************************************************************************************************************************
-//после перемещения блинчика надо осуществить проверку на "пустой ли нулевой стержень", надо ли переходить на режим "сборки башни"
-            if (Game_only_one(Tower) == 0) {//если вернет индекс нулевой башни, то башня была разобрана и теперь надо ее собрать на другом стержне
-                Flag = true;
-            }
-            //после перемещения блинчика надо осуществить проверку на пустой стержень
-            int temp = Game(Tower);//вернется индекс пустой башни
-            if (temp != -1) {//если индекс от 0 до 2, то
-                //необходимо выполнить "падение блинчика с нулевой башни на пустую башню
-                if (Flag == 0) {
-                    Tower[temp].CurentlyIndex++; //повышаем индекс пустой башни
-                    //в пустую башню перемещаем блинчик с нулевой башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
-                    Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PancakeNumber = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;
-                    Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PreviousPosition = 0; //указываем, откуда переместили блинчик
+        //Проверка на пустоту нулевой башни
+        if (Game_only_one(Tower) == 0) {//если вернет индекс нулевой башни, то башня была разобрана и теперь надо ее собрать на другом стержне
+            Flag = true; //переход на второй этап
+            break;
+        }
 
+        if (Flag == false){//если у нас первая башня не пустая, то выполняются следующие правила:
+            /*Постоянная проверка на сброс*/
 
-                    //у нулевой башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
-                    Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber = NULL;
-                    Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PreviousPosition = -1;
-                    Tower[0].CurentlyIndex--;
-
-                    //записываем, какой блинчик и откуда переместили (блинчик уже на новой башне) (чтобы избежать пустых перемещений в будущем)
-                    temp_previous_number_pancake = Tower[temp].PanckakeArrray[Tower[temp].CurentlyIndex].PancakeNumber;
-                    temp_previous_number_karnel = 0;
-                    Tower[0].show_karnel(0);
-                    Tower[1].show_karnel(1);
-                    Tower[2].show_karnel(2);
-                    continue;
-                }
-                //необходимо выполнить "падение блинчика с нулевой башни на пустую башню
-                else {
-                    //если у нас Flag == 1, то значит мы собираем башню вновь, то есть нулевая башня уже однажды была очищена,
-                    //теперь предстоит построить ее на другом стержне
-                    //как именно необходимо поменять правило для этого случая?
-                    //для ответа на этот вопрос - загляни в visio схемы наши, и найди, где перемещается с нулевого стержня пятый (Самый большой) блинчик
-                    //далее анализ того, как у нас заполняются пустые стержни (откуда берется блинчик)
+            if (!((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+                while( Game(Tower) != -1){
+                    temp_previous_number_karnel=0;
+                    temp_previous_number_pancake = sbros(Tower);
                 }
             }
-                //******************************************************************************************************************************************************************
-
-                //******************************************************************************************************************************************************************
-                if (Flag == 0) {//если у нас первая башня не пустая, то выполняются следующие правила:
-                    //Перемещать блинчик с нынешней башни можно только на блин большего значения следующего стержня
-                    for (int i = 0; i < 2; i++) {
-                        nextNumber = (nextNumber + i)%3;
-                        if (Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber > Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber) {
-                            Tower[nextNumber].CurentlyIndex++; //повышаем индекс следующей башни
-                            //в следующую башню перемещаем блинчик с нынешней башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
-                            Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber = Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber;
-                            Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PreviousPosition = number;
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = number; //указываем, откуда переместили блинчик
-
-                            //у текущей башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber = NULL;
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = -1;
-                            Tower[number].CurentlyIndex--;
-
-                            //записываем, какой блинчик и откуда переместили (блинчик уже на следующей башне) (чтобы избежать пустых перемещений в будущем)
-                            temp_previous_number_pancake = Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber;
-                            temp_previous_number_karnel = number;
-                            Tower[0].show_karnel(0);
-                            Tower[1].show_karnel(1);
-                            Tower[2].show_karnel(2);
-                        }
-                        else
-                        {
-                            number++;
-                        }
-                    }
-                }
-                //******************************************************************************************************************************************************************
-                //****************************************************************************************************************************************************************** 
-                            //если у нас первая башня оказалась пустой, теперь надо башню собрать вновь на другом стержне, то выполняются следующие правила:
-                else if ((Tower[nextNumber].CurentlyIndex < 0) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition != nextNumber))
-                {
-
-                    if (Game_only_two(Tower) == 0) {
-                        Flag2 = true;
-                    }
-
-                    if (Flag2 == true) {
-                        int temp;
-                        temp = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;//Если 2 второй стержень пуст, то запоминаем первый (текущий) бличик на первом стержне
-
-                        if (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp) {//Проверяем, нходимся ли мы на блинчике, который пометили
-                            if (number == 0) {
-                                Tower[number + 2].PanckakeArrray[Tower[number + 2].CurentlyIndex].PancakeNumber = temp;//Перемещаем ппомеченный блинчик на number + 1
-                            }
-                            else {
-                                Tower[number - 1].PanckakeArrray[Tower[number - 1].CurentlyIndex].PancakeNumber = temp;//Перемещаем помеченный блинчик на number + 1
-                            }
-                        }
-                        //Перемещать блинчик с нынешней башни можно только на блин большего значения следующего стержня
-                        if ((Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber > Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber) || (Tower[number].CurentlyIndex <= 0)) {
-                            Tower[nextNumber].CurentlyIndex++; //повышаем индекс следующей башни
-                            //в следующую башню перемещаем блинчик с нынешней башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
-                            Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber = Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber;
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = 0; //указываем, откуда переместили блинчик
-                           
-                            //у текущей башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber = NULL;
-                            Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = -1;
-                            Tower[number].CurentlyIndex--;
-
-                            //записываем, какой блинчик и откуда переместили (блинчик уже на следующей башне) (чтобы избежать пустых перемещений в будущем)
-                            temp_previous_number_pancake = Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber;
-                            temp_previous_number_karnel = number;
-                            Tower[0].show_karnel(0);
-                            Tower[1].show_karnel(1);
-                            Tower[2].show_karnel(2);
-                        }
-                    }
-                    //Перемещать блинчик с нынешней башни можно только на блин большего значения следующего стержня
-                    if ((Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber > Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber) || (Tower[number].CurentlyIndex <= 0)) {
-                        Tower[nextNumber].CurentlyIndex++; //повышаем индекс следующей башни
+            /*Обычное смещение блинчика со стержня*/
+            while (Tower[number].CurentlyIndex>-1){
+                int f = 0;
+                for (int i = 0; i < 2; i++) {
+                    int tempnextNumber = (nextNumber + i)%3;
+                    //Если текущий блинчик был на предыдущей позиции в следующем стержне, то туда перемещать его бессмысленно, избегаем пустых перемещений, поэтому переходим на след. итерацию
+                    if ((Tower[tempnextNumber].PanckakeArrray[Tower[tempnextNumber].CurentlyIndex].PancakeNumber > Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber)
+                    && !((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == tempnextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+                        Tower[tempnextNumber].CurentlyIndex++; //повышаем индекс следующей башни
                         //в следующую башню перемещаем блинчик с нынешней башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
-                        Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber = Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber;
-                        Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = 0; //указываем, откуда переместили блинчик
-                        
+                        Tower[tempnextNumber].PanckakeArrray[Tower[tempnextNumber].CurentlyIndex].PancakeNumber = Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber;
+                        Tower[tempnextNumber].PanckakeArrray[Tower[tempnextNumber].CurentlyIndex].PreviousPosition = number;
+                        Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = number; //указываем, откуда переместили блинчик
+
                         //у текущей башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
                         Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber = NULL;
                         Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = -1;
                         Tower[number].CurentlyIndex--;
 
                         //записываем, какой блинчик и откуда переместили (блинчик уже на следующей башне) (чтобы избежать пустых перемещений в будущем)
-                        temp_previous_number_pancake = Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber;
+                        temp_previous_number_pancake = Tower[tempnextNumber].PanckakeArrray[Tower[tempnextNumber].CurentlyIndex].PancakeNumber;
                         temp_previous_number_karnel = number;
                         Tower[0].show_karnel(0);
                         Tower[1].show_karnel(1);
                         Tower[2].show_karnel(2);
+                        cout << "==========================================================================================="<<endl;
+                        /*Постоянная проверка на сброс*/
+                        /*пофиксить условие, чтобы не давал сбрасывать блинчики которые только что положили на первую башню*/if (!((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == nextNumber) && ((Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp_previous_number_pancake) && (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition == temp_previous_number_karnel)))){
+                            if (Game(Tower) != -1){
+                                temp_previous_number_karnel=0;
+                                temp_previous_number_pancake = sbros(Tower);
+                            }
+                        }
+                        break;
+                    }
+                    else if (i==1){
+                        f=1;
+                        break;//выход из for
                     }
                 }
-//******************************************************************************************************************************************************************
-            
-
-            if (number > 2) {
-                number = 0;
+                if (f==1){
+                    break;//выход из while
                 }
+            }
+        }
+        else{ //второй этап
+            int temp;
+            temp = Tower[0].PanckakeArrray[Tower[0].CurentlyIndex].PancakeNumber;//Если 2 второй стержень пуст, то запоминаем первый (текущий) бличик на первом стержне
+
+            if (Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber == temp) {//Проверяем, нходимся ли мы на блинчике, который пометили
+                if (number == 0) {
+                    Tower[number + 2].PanckakeArrray[Tower[number + 2].CurentlyIndex].PancakeNumber = temp;//Перемещаем ппомеченный блинчик на number + 1
+                }
+                else {
+                    Tower[number - 1].PanckakeArrray[Tower[number - 1].CurentlyIndex].PancakeNumber = temp;//Перемещаем помеченный блинчик на number + 1
+                }
+            }
+            //Перемещать блинчик с нынешней башни можно только на блин большего значения следующего стержня
+            if ((Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber > Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber) || (Tower[number].CurentlyIndex <= 0)) {
+                Tower[nextNumber].CurentlyIndex++; //повышаем индекс следующей башни
+                //в следующую башню перемещаем блинчик с нынешней башни, повышаем текущий индекс и добавляем информацию о предыдущей позиции перемещенного блинчика
+                Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber = Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber;
+                Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = 0; //указываем, откуда переместили блинчик
+
+                //у текущей башни очищаем текущий блинчик (так как его переместили) и уменьшаем индекс
+                Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PancakeNumber = NULL;
+                Tower[number].PanckakeArrray[Tower[number].CurentlyIndex].PreviousPosition = -1;
+                Tower[number].CurentlyIndex--;
+
+                //записываем, какой блинчик и откуда переместили (блинчик уже на следующей башне) (чтобы избежать пустых перемещений в будущем)
+                temp_previous_number_pancake = Tower[nextNumber].PanckakeArrray[Tower[nextNumber].CurentlyIndex].PancakeNumber;
+                temp_previous_number_karnel = number;
+                Tower[0].show_karnel(0);
+                Tower[1].show_karnel(1);
+                Tower[2].show_karnel(2);
+            }
+        }
     }
+
+
+
+
     Tower[0].show_karnel(0);
     Tower[1].show_karnel(1);
     Tower[2].show_karnel(2);
